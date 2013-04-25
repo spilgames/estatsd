@@ -6,16 +6,21 @@ NB: Graphite is good, despite the website being a bit ghetto.
 Inspired heavily by etsy statsd:
 http://codeascraft.etsy.com/2011/02/15/measure-anything-measure-everything/
 
+
 QUICK DEMO
 ==========
 
-1) Install and configure graphite (quick-ish)
-2) Install rebar, have it in your path
-3) rebar compile
-4) erl -pa ebin
-5) > application:start(estatsd).
-   > estatsd:increment(foo, 123).
-6) Observe graphite now has 1 data point.
+Prerequisites:
+ * Graphite (or use the included dummy server via "make graphite")
+ * Erlang
+ * Rebar (on your path)
+
+Running:
+ 1. make
+ 2. make go
+ 3. estatsd:increment(foo, 123).
+ 4. Observe graphite now has 1 data point.
+
 
 USAGE
 =====
@@ -53,6 +58,11 @@ Or for your convenience:
     do_sometask(),
     estatsd:timing(sometast, Start).        %% uses now() and now_diff for you
 
+
+CONFIGURATION
+=============
+
+See [config_example](conf/estatsd.config) for an example configuration
 
 
 NOTES
