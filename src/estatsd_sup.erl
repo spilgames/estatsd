@@ -95,5 +95,6 @@ default_enabled_stats(vm_memory) ->
         binary,         %% Currently allocated for binaries
         atom,           %% Currently allocated for atom
         ets,            %% Currently allocated for ets
-        processes       %% Amount of memory currently allocated by the Erlang processes
+        processes,      %% Amount of memory currently allocated by the Erlang processes
+        code            %% Amount of memory allocated for Erlang code
     ].
