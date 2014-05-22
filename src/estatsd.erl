@@ -69,4 +69,4 @@ gauge(Key, Value) when is_number(Value) ->
 
 -spec gauge(key(), integer(), delta()) -> ok.
 gauge(Key, Time, Value) when is_number(Value), is_number(Time) ->
-    gen_server:cast(?SERVER, {gauge, Key, {Value, Time}}).
+    gen_server:cast(?SERVER, {gauge, Key, {Value, integer_to_list(Time)}}).
