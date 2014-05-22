@@ -76,8 +76,7 @@ init([FlushIntervalMs, GraphiteHost, GraphitePort, {VmMetrics, UsedStats}]) ->
                   },
     {ok, update_previous_current(State)}.
 
-handle_cast({gauge, Key, Value0}, State) ->
-    Value = {Value0, unixtime()},
+handle_cast({gauge, Key, {_, _} = Value}, State) ->
     case ets:lookup(?ETS_TABLE_GAUGES, Key) of
         [] ->
             ets:insert(?ETS_TABLE_GAUGES, {Key, [Value]});
@@ -85,6 +84,9 @@ handle_cast({gauge, Key, Value0}, State) ->
             ets:insert(?ETS_TABLE_GAUGES, {Key, [Value | Values]})
     end,
     {noreply, State};
+
+handle_cast({gauge, Key, Value0}, State) ->
+    handle_cast({gauge, Key, {Value0, unixtime()}}, State);
 
 handle_cast({increment, Key, Delta0, Sample}, State) when Sample >= 0, Sample =< 1 ->
     Delta = case {Delta0, Sample} of

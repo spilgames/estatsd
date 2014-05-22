@@ -3,7 +3,7 @@
 -include("defs.hrl").
 
 -export([
-         gauge/2,
+         gauge/2, gauge/3,
          increment/1, increment/2, increment/3,
          decrement/1, decrement/2, decrement/3,
          timing/2
@@ -66,3 +66,7 @@ decrement(Key, Amount, Sample) ->
 -spec gauge(key(), delta()) -> ok.
 gauge(Key, Value) when is_number(Value) ->
     gen_server:cast(?SERVER, {gauge, Key, Value}).
+
+-spec gauge(key(), integer(), delta()) -> ok.
+gauge(Key, Time, Value) when is_number(Value), is_number(Time) ->
+    gen_server:cast(?SERVER, {gauge, Key, {Value, Time}}).
