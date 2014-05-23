@@ -10,8 +10,6 @@
 
 %% Flush once every 10 seconds by default.
 -define(FLUSH_INTERVAL, appvar(flush_interval, 10000)).
--define(GRAPHITE_HOST,  appvar(graphite_host,  "127.0.0.1")).
--define(GRAPHITE_PORT,  appvar(graphite_port,  2003)).
 %% Toggle VM stats on (default) or off.
 -define(VM_METRICS,     appvar(vm_metrics,     true)).
 
@@ -22,10 +20,12 @@
 
 
 start_link() ->
-    start_link( ?FLUSH_INTERVAL, ?GRAPHITE_HOST, ?GRAPHITE_PORT, ?VM_METRICS).
+    {Host, Port} = appvar(graphite, {"127.0.0.1", 2003}),
+    start_link( ?FLUSH_INTERVAL, Host, Port, ?VM_METRICS).
 
 start_link(FlushIntervalMs) ->
-    start_link( FlushIntervalMs, ?GRAPHITE_HOST, ?GRAPHITE_PORT, ?VM_METRICS).
+    {Host, Port} = appvar(graphite, {"127.0.0.1", 2003}),
+    start_link( FlushIntervalMs, Host, Port, ?VM_METRICS).
 
 start_link(FlushIntervalMs, GraphiteHost, GraphitePort) ->
     start_link( FlushIntervalMs, GraphiteHost, GraphitePort, ?VM_METRICS).
