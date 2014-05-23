@@ -16,9 +16,9 @@
   {datatype, {enum, [enabled, disabled]}}]}.
 
 {translation,
- "chunter.kstat_arc",
+ "estatsd.vm_metrics",
  fun(Conf) ->
-         case cuttlefish:conf_get("kstat.arc", Conf) of
+         case cuttlefish:conf_get("estatsd.vm_metrics", Conf) of
              enabled ->
                  true;
              disabled ->
