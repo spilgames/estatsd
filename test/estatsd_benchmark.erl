@@ -10,7 +10,7 @@ benchmark(CountKeys, CountRequests) ->
 	FlushInterval = 4000,
 	estatsd_receiver:start(Port),
 	application:set_env(estatsd, vm_metrics, true),
-	application:set_env(estatsd, graphite_port, Port),
+	application:set_env(estatsd, graphite, {"127.0.0.1", Port}),
 	application:set_env(estatsd, flush_interval, FlushInterval),
 	ok = application:start(estatsd),
 	Keys = [ lists:flatten(io_lib:format("dummmy.key.~p.demo", [Index])) || Index <- lists:seq(0,CountKeys-1)],

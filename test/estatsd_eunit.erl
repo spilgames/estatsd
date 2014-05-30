@@ -11,7 +11,7 @@ setup_no_vmstats() ->
     Port = 2449,
     FlushInterval = 1000,
 	ok = application:set_env(estatsd, vm_metrics, false),
-	ok = application:set_env(estatsd, graphite_port, Port),
+	ok = application:set_env(estatsd, graphite, {"127.0.0.1", Port}),
 	ok = application:set_env(estatsd, flush_interval, FlushInterval),
 	estatsd_receiver:start(Port),
     ok = application:start(estatsd),
@@ -24,7 +24,7 @@ setup_vmstats() ->
     ok = application:set_env(estatsd, vm_statistics, [{additional, [scheduler_wall_time]}]),
     ok = application:set_env(estatsd, vm_memory, [{disabled, [ets]}]),
     ok = application:set_env(estatsd, vm_metrics, true),
-    ok = application:set_env(estatsd, graphite_port, Port),
+	ok = application:set_env(estatsd, graphite, {"127.0.0.1", Port}),
     ok = application:set_env(estatsd, flush_interval, FlushInterval),
     estatsd_receiver:start(Port),
     ok = application:start(estatsd),
@@ -61,25 +61,28 @@ application_novmstats_test_() ->
                 ?_assertEqual(ok, estatsd:gauge("key5", 4)),
                 ?_assertEqual(ok, timer:sleep(2000)),
 
-                %?_assertMatch(ok, ?debugFmt("~p", [estatsd_receiver:get_stats()])),
-                ?_assertMatch({ok, [
-                        {"stats.gauges.key5","4",_},
+                %%?_assertMatch(ok, ?debugFmt("~p", [estatsd_receiver:get_stats()])),
+                ?_assertMatch([
                         {"stats.gauges.key5","2",_},
+                        {"stats.gauges.key5","4",_},
+                        {"stats.key0", _, _}, %% "2.5"
+                        {"stats.key1", _, _}, %% "2.0"
+                        {"stats.key2", _, _}, %% "1.0"
                         {"stats.timers.key3.count","3",_},
                         {"stats.timers.key3.lower","1",_},
-                        {"stats.timers.key3.upper_90","3",_},
+                        {"stats.timers.key3.mean", _, _}, %% "2.0"
                         {"stats.timers.key3.upper","3",_},
-                        {"stats.timers.key3.mean","2.0",_},
+                        {"stats.timers.key3.upper_90","3",_},
                         {"stats.timers.key4.count","1",_},
                         {"stats.timers.key4.lower","0",_},
-                        {"stats.timers.key4.upper_90","0",_},
+                        {"stats.timers.key4.mean", _, _}, %% "0.0"
                         {"stats.timers.key4.upper","0",_},
-                        {"stats.timers.key4.mean","0.0",_},
-                        {"stats.key0", "2.5" ,_},
-                        {"stats.key1", "2.0" ,_},
-                        {"stats.key2", "1.0" ,_}
-                    ]},
-                    estatsd_receiver:get_stats())
+                        {"stats.timers.key4.upper_90","0",_}
+                    ],
+                    begin
+                        {ok, R} = estatsd_receiver:get_stats(),
+                        lists:sort(R)
+                    end)
             ]
         end
     }.
